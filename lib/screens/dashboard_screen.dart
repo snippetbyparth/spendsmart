@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:spendsmart/providers/transaction_provider.dart';
 
-class DashboardScreen extends StatefulWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
-  final List<Map<String, dynamic>> transactions = [
-    {'title': 'Salary', 'amount': 100000, 'type': 'income', 'date': 'May 1'},
-    {'title': 'Groceries', 'amount': 2000, 'type': 'expense', 'date': 'May 2'},
-    {'title': 'Netflix', 'amount': 500, 'type': 'expense', 'date': 'May 3'},
-    {'title': 'Freelance', 'amount': 10000, 'type': 'income', 'date': 'May 4'},
-    {'title': 'Rent', 'amount': 35000, 'type': 'expense', 'date': 'May 4'},
-    {'title': 'EMI', 'amount': 12500, 'type': 'expense', 'date': 'May 5'},
-  ];
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
+    final transactions = ref.watch(transactionProvider);
+    final totalIncome = transactions
+        .where((t) => t['type'] == 'income')
+        .fold(0, (sum, t) => sum + t['amount'] as int);
+
+    final totalExpense = transactions
+        .where((t) => t['type'] == 'expense')
+        .fold(0, (sum, t) => sum + t['amount'] as int);
+
+    final totalBalance = totalIncome - totalExpense;
     return Scaffold(
       backgroundColor: Colors.black87,
       endDrawer: Drawer(
@@ -100,7 +104,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         SizedBox(height: 20),
                         Text('Total Balance', style: TextStyle(fontSize: 20)),
-                        Text('₹60,000', style: TextStyle(fontSize: 22)),
+                        Text('₹$totalBalance', style: TextStyle(fontSize: 22)),
                       ],
                     ),
                   ),
@@ -120,7 +124,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         child: Column(
                           children: [
                             Text('Income', style: TextStyle(fontSize: 20)),
-                            Text('₹110,000', style: TextStyle(fontSize: 22)),
+                            Text('₹$totalIncome', style: TextStyle(fontSize: 22)),
                           ],
                         ),
                       ),
@@ -137,7 +141,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         child: Column(
                           children: [
                             Text('Expenses', style: TextStyle(fontSize: 20)),
-                            Text('₹50,000', style: TextStyle(fontSize: 22)),
+                            Text('₹$totalExpense', style: TextStyle(fontSize: 22)),
                           ],
                         ),
                       ),
@@ -171,7 +175,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: transactions.length,
                           itemBuilder: (context, index) {
-                            final t = transactions[transactions.length-1- index];
+                            final t =
+                                transactions[transactions.length - 1 - index];
                             return ListTile(
                               leading: CircleAvatar(
                                 backgroundColor: t['type'] == 'income'
