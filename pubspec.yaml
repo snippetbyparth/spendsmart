@@ -1,0 +1,23 @@
+name: spendsmart
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_riverpod: ^2.5.1
+  dio: ^5.4.3
+  fl_chart: ^0.67.0
+  shared_preferences: ^2.2.3
+
+flutter:
+  uses-material-design: true
