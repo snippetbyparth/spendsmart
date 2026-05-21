@@ -42,11 +42,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    "Diksha",
+                    "Parth",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    'diksha@gmail.com',
+                    'parth@gmail.com',
                     style: TextStyle(color: Colors.grey),
                   ),
                 ],
