@@ -13,6 +13,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final transactions = ref.watch(transactionProvider);
+    final sortedTransactions = [...transactions]
+      ..sort((a, b) {
+        final aDate = a['dateTime'] as DateTime?;
+        final bDate = b['dateTime'] as DateTime?;
+        if (aDate == null) return 1;
+        if (bDate == null) return -1;
+        return bDate.compareTo(aDate);
+      });
     final totalIncome = transactions
         .where((t) => t['type'] == 'income')
         .fold(0, (sum, t) => sum + t['amount'] as int);
@@ -45,10 +53,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     "Parth",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                    'parth@gmail.com',
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                  Text('parth@gmail.com', style: TextStyle(color: Colors.grey)),
                 ],
               ),
             ),
@@ -124,7 +129,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         child: Column(
                           children: [
                             Text('Income', style: TextStyle(fontSize: 20)),
-                            Text('₹$totalIncome', style: TextStyle(fontSize: 22)),
+                            Text(
+                              '₹$totalIncome',
+                              style: TextStyle(fontSize: 22),
+                            ),
                           ],
                         ),
                       ),
@@ -141,7 +149,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         child: Column(
                           children: [
                             Text('Expenses', style: TextStyle(fontSize: 20)),
-                            Text('₹$totalExpense', style: TextStyle(fontSize: 22)),
+                            Text(
+                              '₹$totalExpense',
+                              style: TextStyle(fontSize: 22),
+                            ),
                           ],
                         ),
                       ),
@@ -173,11 +184,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          itemCount: transactions.length,
+                          itemCount: sortedTransactions.length,
                           itemBuilder: (context, index) {
                             final t =
-                                transactions[transactions.length - 1 - index];
+                                sortedTransactions[index]; // ← inside the function
                             return ListTile(
+                              // ← return is inside too
                               leading: CircleAvatar(
                                 backgroundColor: t['type'] == 'income'
                                     ? Colors.green
@@ -201,7 +213,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 ),
                               ),
                             );
-                          },
+                          }, // ← function closes here
                         ),
                       ],
                     ),
