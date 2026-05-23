@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spendsmart/screens/budget_screen.dart';
 import 'package:spendsmart/screens/dashboard_screen.dart';
 import 'package:spendsmart/screens/reports_screen.dart';
 import 'package:spendsmart/screens/transaction_screen.dart';
@@ -15,7 +16,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = [
     DashboardScreen(),
     TransactionScreen(),
+    BudgetScreen(),
     ReportsScreen(),
+
   ];
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,9 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         items: [BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
         BottomNavigationBarItem(icon: Icon(Icons.list),label: 'Transactions'),
-        BottomNavigationBarItem(icon: Icon(Icons.bar_chart),label: 'Reports')],
+        BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'Budget'),
+        BottomNavigationBarItem(icon: Icon(Icons.bar_chart),label: 'Reports'),
+        ],
       ),
     );
   }
