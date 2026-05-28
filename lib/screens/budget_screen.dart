@@ -18,7 +18,8 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Budget')),
+      backgroundColor: Colors.black87,
+      appBar: AppBar(title: const Text('Budget'), backgroundColor: Colors.black87,),
       body: ListView.builder(
         padding: EdgeInsets.all(16),
         itemCount: budgets.length,
