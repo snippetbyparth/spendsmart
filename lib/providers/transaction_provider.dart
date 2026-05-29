@@ -14,15 +14,24 @@ class TransactionNotifier extends AsyncNotifier<List<Map<String, dynamic>>> {
 
   Future<List<Map<String, dynamic>>> _fetchTransactions() async {
     final userId = UserSession.userId;
+    print('Fetching transactions for userID: $userId');
     if (userId == null) return [];
     final data = await ApiService().getTransactions(userId);
-    return data.map((t) => {
-      'title': t['title'],
-      'amount': t['amount'],
-      'type': t['type'],
-      'date': t['date'],
-      'dateTime': DateTime.parse(t['created_at']),
-    }).toList();
+    print('Data from API: $data');
+    return data.map((t) {
+  print('selected_date: ${t['selected_date']}');
+  return {
+    'title': t['title'],
+    'amount': t['amount'],
+    'type': t['type'],
+    'date': t['date'],
+    'dateTime': t['selected_date'] != null
+      ? DateTime.parse(t['selected_date'])
+      : t['created_at'] != null
+        ? DateTime.parse(t['created_at'])
+        : DateTime.now(),
+  };
+}).toList();
   }
 
   Future<void> addTransaction(Map<String, dynamic> transaction) async {

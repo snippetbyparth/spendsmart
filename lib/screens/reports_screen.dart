@@ -27,13 +27,16 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         final date = t['dateTime'] as DateTime;
         final now = DateTime.now();
         final diff = now.difference(date).inDays;
+        print('Title: ${t['Title']}, date: $date, diff: $diff, weekday: ${date.weekday}');
         if (diff < 7) {
           dailySpending[date.weekday] =
               (dailySpending[date.weekday] ?? 0) +
-              (t['amount'] as int).toDouble();
+              (t['amount'] as num).toDouble();
         }
       }
     }
+    print('Transactions: $transactions');
+    print('Daily spending: $dailySpending');
 
     final Map<String, double> categorySpending = {};
     for (final t in transactions) {
@@ -45,6 +48,49 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     }
     return Scaffold(
       backgroundColor: Colors.black87,
+      endDrawer: Drawer(
+        backgroundColor: Colors.black87,
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              color: Colors.grey.shade900,
+              padding: EdgeInsets.fromLTRB(20, 50, 20, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.brown.shade900,
+                    child: Icon(Icons.person, color: Colors.white, size: 30),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Parth",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text('parth@gmail.com', style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Profile'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Logout'),
+              onTap: () {},
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         title: const Text('Reports'),
         backgroundColor: Colors.black87,

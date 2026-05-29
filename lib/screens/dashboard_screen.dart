@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spendsmart/providers/transaction_provider.dart';
+import 'package:spendsmart/screens/login_screen.dart';
+import 'package:spendsmart/screens/settings_screen.dart';
+import 'package:spendsmart/services/user_session.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -68,12 +71,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ListTile(
               leading: Icon(Icons.settings),
               title: Text('Settings'),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context,
+                MaterialPageRoute(builder: (_)=> SettingsScreen()));
+              },
             ),
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Logout'),
-              onTap: () {},
+              onTap: () {
+                //diksha
+                UserSession.userId = null;
+                UserSession.name = null;
+                UserSession.token = null;
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => LoginScreen() ,), (route) => false,);
+              },
             ),
           ],
         ),

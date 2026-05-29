@@ -33,6 +33,49 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
           });
     return Scaffold(
       backgroundColor: Colors.black87,
+      endDrawer: Drawer(
+        backgroundColor: Colors.black87,
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              color: Colors.grey.shade900,
+              padding: EdgeInsets.fromLTRB(20, 50, 20, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.brown.shade900,
+                    child: Icon(Icons.person, color: Colors.white, size: 30),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Parth",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text('parth@gmail.com', style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Profile'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Logout'),
+              onTap: () {},
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         title: const Text('Transactions'),
         backgroundColor: Colors.black87,

@@ -184,6 +184,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                   'type': selectedType,
                   'date':
                       '${_getMonthName(selectedDate.month)} ${selectedDate.day}',
+                  'selected_date': selectedDate.toIso8601String(),
                   
                 });
                 print('Transaction saved');
