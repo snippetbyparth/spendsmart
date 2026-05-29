@@ -14,8 +14,10 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
   String _selectedFilter = 'All'; // 'All', 'Income', 'Expense'
   @override
   Widget build(BuildContext context) {
-    final transactions = ref.watch(transactionProvider);
-
+    final transactionsAsync = ref.watch(transactionProvider);
+    final transactions = transactionsAsync.when(loading: () => <Map<String,dynamic>>[],
+    error: (e,st)=> <Map<String,dynamic>>[],
+    data: (data) => data,);
     final filtered =
         (_selectedFilter == 'All'
               ? transactions

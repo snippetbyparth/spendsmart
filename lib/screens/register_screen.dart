@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spendsmart/screens/home_screen.dart';
+import 'package:spendsmart/services/api_services.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -31,12 +33,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
               const SizedBox(height: 170),
-              Center(child: Text('Register',style: TextStyle(fontSize: 28,
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic),),),
-              const SizedBox(height: 20,),
+              Center(
+                child: Text(
+                  'Register',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
               TextField(
                 controller: nameController,
                 cursorColor: Colors.white,
@@ -51,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: Colors.white, width: 3),
                   ),
-                  prefixIcon: const Icon(Icons.person)
+                  prefixIcon: const Icon(Icons.person),
                 ),
               ),
               const SizedBox(height: 25),
@@ -72,7 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: Colors.white, width: 3),
                   ),
-                  prefixIcon: const Icon(Icons.email_outlined)
+                  prefixIcon: const Icon(Icons.email_outlined),
                 ),
               ),
               const SizedBox(height: 25),
@@ -91,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: Colors.white, width: 3),
                   ),
-                  prefixIcon: const Icon(Icons.lock_outline)
+                  prefixIcon: const Icon(Icons.lock_outline),
                 ),
               ),
               const SizedBox(height: 25),
@@ -110,7 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: Colors.white, width: 3),
                   ),
-                  prefixIcon: const Icon(Icons.password)
+                  prefixIcon: const Icon(Icons.password),
                 ),
               ),
               const SizedBox(height: 50),
@@ -124,31 +132,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
-                    if (nameController.text.isEmpty){
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter your name.')));
+                  onPressed: () async {
+                    if (nameController.text.isEmpty ||
+                        emailController.text.isEmpty ||
+                        passwordController.text.isEmpty ||
+                        confirmPasswordController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Please fill all fields!')),
+                      );
                       return;
                     }
-                    if (emailController.text.isEmpty){
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter your email.')));
+                    if (passwordController.text !=
+                        confirmPasswordController.text) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Passwords do not match!')),
+                      );
                       return;
                     }
-                    if (passwordController.text.isEmpty){
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter your new password.')));
-                      return;
+                    try {
+                      await ApiService().register(
+                        nameController.text,
+                        emailController.text,
+                        passwordController.text,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Account created! Please login.'),
+                        ),
+                      );
+                      Navigator.pop(context);
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Email already registered!')),
+                      );
                     }
-                    if (nameController.text.isEmpty){
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please confirm your password.')));
-                      return;
-                    }
-                    if (passwordController.text != confirmPasswordController.text){
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Password doesn't match")));
-                      return;
-                    }
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const HomeScreen()),
-                    );
                   },
                   child: const Text(
                     'Register',
@@ -156,10 +173,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16,),
-              Center(child: TextButton(onPressed:() {
-                Navigator.pop(context);
-              }, child: const Text('Already have an account? Login',style: TextStyle(color: Colors.white),)),)
+              const SizedBox(height: 16),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'Already have an account? Login',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

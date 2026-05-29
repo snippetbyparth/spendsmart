@@ -12,7 +12,10 @@ class DashboardScreen extends ConsumerStatefulWidget {
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
-    final transactions = ref.watch(transactionProvider);
+    final transactionsAsync = ref.watch(transactionProvider);
+    final transactions = transactionsAsync.when(loading: () => <Map<String,dynamic>>[],
+    error: (e, st) => <Map<String,dynamic>>[],
+    data: (data) => data,);
     final sortedTransactions = [...transactions]
       ..sort((a, b) {
         final aDate = a['dateTime'] as DateTime?;
@@ -23,11 +26,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       });
     final totalIncome = transactions
         .where((t) => t['type'] == 'income')
-        .fold(0, (sum, t) => sum + t['amount'] as int);
+        .fold(0.0, (sum, t) => sum + (t['amount'] as num).toDouble());
 
     final totalExpense = transactions
         .where((t) => t['type'] == 'expense')
-        .fold(0, (sum, t) => sum + t['amount'] as int);
+        .fold(0.0, (sum, t) => sum + (t['amount'] as num).toDouble());
 
     final totalBalance = totalIncome - totalExpense;
     return Scaffold(
@@ -109,7 +112,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         ),
                         SizedBox(height: 20),
                         Text('Total Balance', style: TextStyle(fontSize: 20)),
-                        Text('₹$totalBalance', style: TextStyle(fontSize: 22)),
+                        Text('₹${totalBalance.toStringAsFixed(0)}', style: TextStyle(fontSize: 22)),
                       ],
                     ),
                   ),
@@ -130,7 +133,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           children: [
                             Text('Income', style: TextStyle(fontSize: 20)),
                             Text(
-                              '₹$totalIncome',
+                              '₹${totalIncome.toStringAsFixed(0)}',
                               style: TextStyle(fontSize: 22),
                             ),
                           ],
@@ -150,7 +153,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           children: [
                             Text('Expenses', style: TextStyle(fontSize: 20)),
                             Text(
-                              '₹$totalExpense',
+                              '₹${totalExpense.toStringAsFixed(0)}',
                               style: TextStyle(fontSize: 22),
                             ),
                           ],

@@ -15,7 +15,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     // Get daily spending for last 7 days
-    final transactions = ref.watch(transactionProvider);
+    final transactionsAsync = ref.watch(transactionProvider);
+    final transactions = transactionsAsync.when(
+      loading: () => <Map<String,dynamic>>[],
+      error: (e,st)=> <Map<String,dynamic>>[],
+      data: (data) => data,
+    );
     final Map<int, double> dailySpending = {};
     for (final t in transactions) {
       if (t['type'] == 'expense' && t['dateTime'] != null) {
@@ -34,7 +39,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     for (final t in transactions) {
       if (t['type'] == 'expense') {
         final category = t['title'] as String;
-        final amount = (t['amount'] as int).toDouble();
+        final amount = (t['amount'] as num).toDouble();
         categorySpending[category] = (categorySpending[category] ?? 0) + amount;
       }
     }

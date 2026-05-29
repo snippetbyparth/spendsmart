@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:spendsmart/screens/home_screen.dart';
 import 'package:spendsmart/screens/register_screen.dart';
+import 'package:spendsmart/services/api_services.dart';
+import 'package:spendsmart/services/user_session.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -87,14 +89,31 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
-                    // Temporarily skip auth, go to Dashboard
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const HomeScreen(),
-                      ),
-                    );
+                  onPressed: () async {
+                    if (emailController.text.isEmpty ||
+                        passwordController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Please fill all fields!')),
+                      );
+                      return;
+                    }
+                    try {
+                      final result = await ApiService().login(
+                        emailController.text,
+                        passwordController.text,
+                      );
+                      UserSession.userId = result['user_id']; // ← add this
+                      UserSession.name = result['name']; // ← add this
+                      UserSession.token = result['access_token']; // ← add this
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HomeScreen()),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Invalid email or password!')),
+                      );
+                    }
                   },
                   child: const Text(
                     'Login',
@@ -108,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => RegisterScreen()),
+                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
                     );
                   },
                   child: const Text(

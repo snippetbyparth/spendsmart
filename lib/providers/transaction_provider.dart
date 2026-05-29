@@ -1,24 +1,34 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:spendsmart/services/api_services.dart';
+import 'package:spendsmart/services/user_session.dart';
 
-final List<Map<String, dynamic>> initialTransactions = [
-  {'title': 'Salary', 'amount': 100000, 'type': 'income', 'date': 'May 1', 'dateTime': DateTime(2026, 5, 26)},
-  {'title': 'Groceries', 'amount': 2000, 'type': 'expense', 'date': 'May 2', 'dateTime': DateTime(2026, 5, 26)},
-  {'title': 'Netflix', 'amount': 500, 'type': 'expense', 'date': 'May 3', 'dateTime': DateTime(2026, 5, 27)},
-  {'title': 'Freelance', 'amount': 10000, 'type': 'income', 'date': 'May 4', 'dateTime': DateTime(2026, 5, 27)},
-  {'title': 'Rent', 'amount': 35000, 'type': 'expense', 'date': 'May 4', 'dateTime': DateTime(2026, 5, 28)},
-  {'title': 'EMI', 'amount': 12500, 'type': 'expense', 'date': 'May 5', 'dateTime': DateTime(2026, 5, 28)},
-];
-
-  final transactionProvider = StateNotifierProvider<TransactionNotifier, List<Map<String, dynamic>>>(
-  (ref) => TransactionNotifier(),
+final transactionProvider = AsyncNotifierProvider<TransactionNotifier, List<Map<String, dynamic>>>(
+  () => TransactionNotifier(),
 );
 
-// The notifier — manages the data
-class TransactionNotifier extends StateNotifier<List<Map<String, dynamic>>> {
-  TransactionNotifier() : super(initialTransactions);
+class TransactionNotifier extends AsyncNotifier<List<Map<String, dynamic>>> {
+  @override
+  Future<List<Map<String, dynamic>>> build() async {
+    return await _fetchTransactions();
+  }
 
-  void addTransaction(Map<String, dynamic> transaction) {
-    state = [transaction, ...state];
+  Future<List<Map<String, dynamic>>> _fetchTransactions() async {
+    final userId = UserSession.userId;
+    if (userId == null) return [];
+    final data = await ApiService().getTransactions(userId);
+    return data.map((t) => {
+      'title': t['title'],
+      'amount': t['amount'],
+      'type': t['type'],
+      'date': t['date'],
+      'dateTime': DateTime.parse(t['created_at']),
+    }).toList();
+  }
+
+  Future<void> addTransaction(Map<String, dynamic> transaction) async {
+    final userId = UserSession.userId;
+    if (userId == null) return;
+    await ApiService().createTransaction(userId, transaction);
+    state = AsyncData(await _fetchTransactions());
   }
 }

@@ -166,24 +166,33 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              onPressed: () {
+              onPressed: () async{
+                print('Save tapped');
                 if (titleController.text.isEmpty ||
                     amountController.text.isEmpty) {
+                      print('Fields empty');
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Please fill all fields!')),
                   );
                   return;
                 }
-                ref.read(transactionProvider.notifier).addTransaction({
+                print('Calling addTransaction');
+                try {
+                await ref.read(transactionProvider.notifier).addTransaction({
                   'title': titleController.text,
                   'amount': int.parse(amountController.text),
                   'type': selectedType,
                   'date':
                       '${_getMonthName(selectedDate.month)} ${selectedDate.day}',
-                  'dateTime': selectedDate, // ← add this
+                  
                 });
+                print('Transaction saved');
+                } catch(e){
+                  print('Error: $e');
+                }
                 Navigator.pop(context);
               },
+              
               child: Text(
                 'Save',
                 style: TextStyle(fontSize: 16, color: Colors.white),
